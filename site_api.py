@@ -6,7 +6,9 @@ import scatfunc
 import json
 import bencodepy
 import constant
+import torclient
 from html2phpbbcode.parser import HTML2PHPBBCode
+
 
 PTER_KEY = constant.pter_key
 ANONYMOUS = constant.anonymous
@@ -164,7 +166,7 @@ class GGnApi:
         torrent = bytes()
         for chunk in res.iter_content(100000):
             torrent += chunk
-        ggn_dir = os.path.join(TORRENT_DIR, 'ggn/')
+        ggn_dir = os.path.join(TORRENT_DIR, 'ggn')
         if not os.path.exists(ggn_dir):
             os.makedirs(ggn_dir)
         self.torrent_title = '{}-{}'.format(self.platform, re.sub(r'[/:*?"<>|]', '_', self.release_title))
@@ -176,7 +178,10 @@ class GGnApi:
         torrent[b'info'][b'source'] = bytes('[pterclub.com] ＰＴ之友俱乐部', encoding='utf-8')
         del torrent[b'comment']
         torrent = bencodepy.encode(torrent)
-        with open(os.path.join('torrents', os.path.basename('[PTer]{}.torrent'.format(self.torrent_title))), 'wb') as t:
+        pter_dir = os.path.join(TORRENT_DIR, 'pter')
+        if not os.path.exists(pter_dir):
+            os.makedirs(pter_dir)
+        with open(os.path.join(pter_dir, os.path.basename('[PTer]{}.torrent'.format(self.torrent_title))), 'wb') as t:
             t.write(torrent)
 
     def _return_terms(self):
@@ -187,7 +192,20 @@ class GGnApi:
         attr['session'] = None
         return attr
 
+    def add_torrent_to_qb(self, dl_url):
+        cs = torclient.ClientSetting()
+        cs.load_from_config('config.ini')
+        print('种子加入下载器...')
+        dlclient = torclient.getDownloadClient(cs)
+        st = None
+        if dlclient:
+            st = dlclient.addTorrentUrl(dl_url, '')
+            if st:
+                print('种子加入下载器成功: %s (%s) ' % (st.name, st.tracker))
+        return st
+
     def worker(self):
+        self.add_torrent_to_qb(self.dl_link)
         if GGNAPI:
             print('正在获取游戏&种子信息...')
             self._handle_api()
@@ -294,7 +312,7 @@ class PTerApi:
                 new_nfo_img = nfo_img
             self.torrent_desc = self.torrent_desc.replace(nfo_img, new_nfo_img)
         url = 'https://pterclub.com/takeuploadgame.php'
-        torrent_file = os.path.join(TORRENT_DIR, '[PTer]{}.torrent'.format(self.torrent_title))
+        torrent_file = os.path.join(TORRENT_DIR, 'pter', '[PTer]{}.torrent'.format(self.torrent_title))
         file = ("file", (os.path.basename(torrent_file), open(torrent_file, 'rb'), 'application/x-bittorrent')),
         data = {'uplver': self.uplver, 'categories': constant.release_type_dict[self.release_type],
                 'format': constant.release_format_dict[

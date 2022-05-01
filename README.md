@@ -1,3 +1,48 @@
+
+# ggn2pter修改版
+
+在原代码基础上，加以下修改：
+1. 添加下载器的支持（当前仅支持qb)， 体现在：
+   1. 在首次配置时将提示设置host, port, username, password
+   2. 在输入ggn 下载link后，将此链接推送到下载器中开始下载
+2. 写了一个 `seedpter.py` 用于将生成的 `[PTer]` 种子推送到下载器
+
+## 使用方法：
+1. 依照下述原说明运行：
+```sh
+python main.py
+```
+  首次运行，依照提示填写:
+  1. 猫站cookie : 在猫站网页上按F12到网络-请求标头中找cookie拷贝过来
+  2. 猫站passkey : 在猫站个人控制面板中找来拷贝过来
+  3. 是否匿名发布 : 填 no 吧
+  4. 种子下载路径 : 在运行脚本的机器上，找到一个位置，用于存储下载的种子，将会分出三个子目录：`ggn`，`pter`, `backup`
+  5. 是否为GGn elite gamer 及以上 : 字面意思
+  6. ggn的apikey : 在ggn页面上个人id边上的 `Edit` 点进去，拉到后面找Api Key字样，建一个api，记下字串（找个地方保存), 拷贝过来
+  7. QB的host : （新加的）用于下载和作种的qBittorrent，只填IP
+  8. QB的port : （新加的）用于下载和作种的qBittorrent, Port
+  9. QB的username : （新加的）用于下载和作种的qBittorrent, 用户名
+  10. QB的password : （新加的）用于下载和作种的qBittorrent, 密码
+  将生成 `config.ini`, `cookies.json` 和一个空的 `ggn_links.txt`
+
+
+2. 再次运行 `python main.py`, 依据提示输入：
+   1. GGn种子下载连接
+   2. 然后会问几个关于游戏的问题
+   3. 将会在猫站发布游戏，并生成可用于猫站发布的种子，存在前述种子下载路径的 `pter` 子目录中，然后提示结束
+
+3. 查看qb中ggn的种子是否已经下载完成，完成后，运行：
+```sh
+python seedpter.py
+```
+将会将刚才生成的猫站种子（位于前述种子下载路径的 `pter` 子目录中)，上传至所设置的qb下载器中，开始作种。
+上传后的种子，将被移到种子下载路径的 `backup` 子目录，保持`pter` 子目录为空
+> qb有种子完成后运行一个命令的功能，可以调用此功能进行自动上传种子作种
+
+
+以下为原说明
+-------
+
 # ggn2pter GGn快捷转种工具![python](https://img.shields.io/badge/python-3.7-blue)![time](https://img.shields.io/github/last-commit/scatking/ggn2pter)<!-- ALL-CONTRIBUTORS-BADGE:START - Do not remove or modify this section -->[![All Contributors](https://img.shields.io/badge/all_contributors-1-orange.svg?style=flat-square)](#contributors-)<!-- ALL-CONTRIBUTORS-BADGE:END -->
 
 

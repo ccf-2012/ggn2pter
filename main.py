@@ -13,7 +13,7 @@ def initial():
     if 'cookies.json' not in os.listdir() or 'config.ini' not in os.listdir():
         if 'cookies.json' not in os.listdir():
             print('检测到cookies文件不存在，请手动输入cookies：')
-            ggn_cookie = input('请输入GGn的cookie：')
+            # ggn_cookie = input('请输入GGn的cookie：')
             pter_cookie = input('请输入PTer的cookie：')
             cookies = {"ggn": ggn_cookie, "pter": pter_cookie}
             with open('cookies.json', 'w') as coo:
@@ -27,6 +27,11 @@ def initial():
             torrent_dir = input('请输入种子下载路径，默认为当前目录下的torrents文件夹:')
             elite_gamer = input('是否为GGn elite gamer 及以上(yes/no 默认为是)')
             ggn_api = input('请输入ggn的apikey，留空则放弃输入：')
+            qbhost = input('下载器IP：')
+            qbport = input('下载器Port：')
+            qbusername = input('下载器Username：')
+            qbpassword = input('下载器Password：')
+
             if torrent_dir == '':
                 torrent_dir = 'torrents'
             if elite_gamer != 'no':
@@ -34,6 +39,7 @@ def initial():
             config['PTER'] = {'pter_key': passkey, 'anonymous': anonymous}
             config['WORKDIR'] = {'torrent_dir': torrent_dir}
             config['GGN'] = {'elite_gamer':elite_gamer,'ggn_api':ggn_api}
+            config['CLIENT'] = {'type':'qb', 'host':qbhost, 'port': qbport, 'username':qbusername, 'password':qbpassword}
             config.write(open('config.ini', 'w'))
         print('初始化完毕，请重新运行！')
         exit()

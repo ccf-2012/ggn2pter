@@ -5,3 +5,7 @@ beautifulsoup4==4.9.3
 Requests==2.25.1
 lxml
 scatfunc @ git+https://github.com/scatking/scatfun.git
+pytz
+qbittorrent-api
+transmission-rpc
+deluge_client
